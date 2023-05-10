@@ -1,22 +1,39 @@
+// Packages
 const express = require('express');
 const mongoose = require('mongoose');
-const ejs = require('ejs');
+// const ejs = require('ejs');
+const path = require('path');
+const config = require('./config/database')
+const bodyParser = require('body-parser');
 
-mongoose.connect('mongodb+srv://MngK4:Quymui049@orders-testing.f8x99no.mongodb.net/E-Commerce?retryWrites=true&w=majority')
+
+// Init app
+var app = express();
+
+mongoose.connect(config.database)
 .then(() => console.log('Connect to the database succesfully'))
 .catch((error) => console.log('Connection was unsuccessful'));
 
-// const person = new User({
-//     name: 'Minh',
-//     userID: '159'
-// });
+// View engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
-// person.save()
-// .then(() => console.log('Document saved'))
-// .catch((error) => console.log('Document save failed'))
+// Public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
-const User = mongoose.model('User',userSchema);
+app.get('/', function(req, res) {
+    res.send('working');
+});
 
-User.find()
-.then(() => console.log(users))
-.catch((error) => console.log('No users found'));
+// Body-parser middleware
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
+
+// Start local host
+var port = 3000;
+app.listen(port, function() {
+    console.log('Sever started on port ' + port);
+});
